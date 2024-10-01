@@ -1,5 +1,5 @@
 """
-URL configuration for gettingstarted project.
+URL configuration for config project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -16,14 +16,16 @@ Including another URLconf
 """
 
 # from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
-import hello.views
+import core.views
+
 
 urlpatterns = [
-    path("", hello.views.index, name="index"),
-    path("db/", hello.views.db, name="db"),
+    path("", core.views.index, name="index"),
+    path("db/", core.views.db, name="db"),
     # Uncomment this and the entry in `INSTALLED_APPS` if you wish to use the Django admin feature:
     # https://docs.djangoproject.com/en/5.1/ref/contrib/admin/
     # path("admin/", admin.site.urls),
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
