@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Greeting
+
+
+@admin.register(Greeting)
+class GreetingAdmin(admin.ModelAdmin):
+    fields = ("when",)
+    readonly_fields = ("when",)
+    # list_display = ("when",)

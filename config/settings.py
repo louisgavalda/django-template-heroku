@@ -61,9 +61,7 @@ else:
 INSTALLED_APPS = [
     # Use WhiteNoise's runserver implementation instead of the Django default, for dev-prod parity.
     "whitenoise.runserver_nostatic",
-    # Uncomment this and the entry in `urls.py` if you wish to use the Django admin feature:
-    # https://docs.djangoproject.com/en/5.1/ref/contrib/admin/
-    # "django.contrib.admin",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
