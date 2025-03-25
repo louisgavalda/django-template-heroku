@@ -1,0 +1,59 @@
+<h2 class="text-xl font-semibold mb-3">Résultats ({{ page_obj.paginator.count }})</h2>
+
+{% if object_list %}
+  <div class="w-full overflow-x-auto">
+    <table class="w-full text-left border border-separate border-slate-200" cellspacing="0">
+      <tbody>
+        <tr>
+          <th scope="col" class="h-10 px-4 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100">Nom</th>
+          <th scope="col" class="h-10 px-4 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100">Chemin</th>
+          <th scope="col" class="h-10 px-4 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100">Extension</th>
+          <th scope="col" class="h-10 px-4 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100">Taille</th>
+          <th scope="col" class="h-10 px-4 text-sm font-medium border-l first:border-l-0 stroke-slate-700 text-slate-700 bg-slate-100">Modifié le</th>
+        </tr>
+
+        {% for file in object_list %}
+        <tr class="transition-colors duration-200 hover:bg-slate-50 cursor-pointer"
+            hx-get="{% url 'file_detail' file.id %}"
+            hx-target="#file-details"
+            hx-trigger="click"
+            hx-swap="innerHTML">
+          <td class="h-10 px-4 text-sm transition border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-600">{{ file.name }}</td>
+          <td class="h-10 px-4 text-sm transition border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-600 truncate max-w-md">{{ file.directory.path }}</td>
+          <td class="h-10 px-4 text-sm transition border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-600">{{ file.extension }}</td>
+          <td class="h-10 px-4 text-sm transition border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-600">{{ file.size|filesizeformat }}</td>
+          <td class="h-10 px-4 text-sm transition border-t border-l first:border-l-0 border-slate-200 stroke-slate-500 text-slate-600">{{ file.modified_at|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4 flex justify-between items-center">
+    {% if page_obj.has_previous %}
+      <a href="?{% if q %}q={{ q }}&{% endif %}{% for key, value in request.GET.items %}{% if key != 'q' and key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+         hx-get="{% url 'file_search_results' %}?{% if q %}q={{ q }}&{% endif %}{% for key, value in request.GET.items %}{% if key != 'q' and key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+         hx-target="#search-results"
+         class="px-3 py-1 border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-colors">Précédent</a>
+    {% else %}
+      <span class="px-3 py-1 border border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed">Précédent</span>
+    {% endif %}
+
+    <span class="text-sm text-slate-600">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+      <a href="?{% if q %}q={{ q }}&{% endif %}{% for key, value in request.GET.items %}{% if key != 'q' and key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+         hx-get="{% url 'file_search_results' %}?{% if q %}q={{ q }}&{% endif %}{% for key, value in request.GET.items %}{% if key != 'q' and key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+         hx-target="#search-results"
+         class="px-3 py-1 border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-colors">Suivant</a>
+    {% else %}
+      <span class="px-3 py-1 border border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed">Suivant</span>
+    {% endif %}
+  </div>
+{% else %}
+  <div class="py-6 text-center">
+    <p class="text-slate-500">Aucun fichier ne correspond à votre recherche.</p>
+  </div>
+{% endif %}
+
+<div id="file-details" class="mt-4"></div>

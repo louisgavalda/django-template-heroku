@@ -1,0 +1,19 @@
+{% for directory in directories %}
+  <li class="py-0.5">
+    <div class="flex items-center hover:bg-slate-100 p-1 transition-colors cursor-pointer"
+         hx-get="{% url 'file_search_results' %}?directory_path={{ directory.path|urlencode }}"
+         hx-target="#search-results"
+         hx-indicator=".htmx-indicator">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500 mr-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+      </svg>
+      <span class="text-sm text-slate-700 truncate">{{ directory.name }}</span>
+    </div>
+
+    {% if directory.children.exists %}
+      <ul class="list-none ml-5 border-l border-slate-200 pl-1">
+        {% include "core/directory_tree.html" with directories=directory.children.all %}
+      </ul>
+    {% endif %}
+  </li>
+{% endfor %}

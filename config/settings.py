@@ -32,10 +32,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # https://docs.djangoproject.com/en/5.1/ref/settings/#std-setting-SECRET_KEY
 # https://devcenter.heroku.com/articles/config-vars
 # SECURITY WARNING: Keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    default=secrets.token_urlsafe(nbytes=64),
-)
+# SECRET_KEY = os.environ.get(
+#     "DJANGO_SECRET_KEY",
+#     default=secrets.token_urlsafe(nbytes=64),
+# )
+SECRET_KEY = "75cbf98ed0d00a26c139a015804f48170bbe1b1df6b8142ae69f0bb4ec6aa662"
 
 # Django has a debug mode which shows more detailed error messages and also means static assets
 # can be served without having to run the production `collectstatic` command. However, this
@@ -70,7 +71,14 @@ if IS_HEROKU_APP:
     # https://docs.djangoproject.com/en/5.1/ref/middleware/#http-strict-transport-security
     SECURE_SSL_REDIRECT = True
 else:
-    ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
+    ALLOWED_HOSTS = [
+        ".localhost",
+        "127.0.0.1",
+        "[::1]",
+        "0.0.0.0",
+        "[::]",
+        "10.33.144.230",
+    ]
 
 
 # Application definition
@@ -95,6 +103,8 @@ INSTALLED_APPS = [
     "django_browser_reload",
     "userauth",
     "core",
+    "django_filters",
+    "django_htmx",
 ]
 
 MIDDLEWARE = [
@@ -110,6 +120,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
