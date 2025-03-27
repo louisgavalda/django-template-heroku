@@ -1,5 +1,6 @@
 import os, mimetypes, hashlib
 from pathlib import Path
+import warnings
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -20,6 +21,15 @@ class Command(BaseCommand):
 
         self.stdout.write(f"Starting scan of {root_path}")
 
+        # Statistiques pour le suivi
+        stats = {
+            "directories_created": 0,
+            "directories_existing": 0,
+            "files_created": 0,
+            "files_existing": 0,
+            "files_updated": 0,
+        }
+
         # Map pour cacher les directories déjà scannés
         directory_cache = {}
 
@@ -35,6 +45,12 @@ class Command(BaseCommand):
                     "last_modified": timezone.now(),
                 },
             )
+
+            # Mettre à jour les statistiques
+            if created:
+                stats["directories_created"] += 1
+            else:
+                stats["directories_existing"] += 1
 
             # Mettre à jour le parent si nécessaire
             parent_path = os.path.dirname(dir_path)
@@ -91,6 +107,12 @@ class Command(BaseCommand):
                                     },
                                 )
 
+                                # Mettre à jour les statistiques
+                                if created:
+                                    stats["files_created"] += 1
+                                else:
+                                    stats["files_existing"] += 1
+
                                 # Mettre à jour si le fichier a été modifié
                                 if not created and (
                                     full_scan
@@ -102,6 +124,7 @@ class Command(BaseCommand):
                                         timezone.datetime.fromtimestamp(stat.st_mtime)
                                     )
                                     file_obj.save()
+                                    stats["files_updated"] += 1
 
                                 file_obj.last_indexed = timezone.now()
                                 file_obj.save(update_fields=["last_indexed"])
@@ -120,5 +143,17 @@ class Command(BaseCommand):
                 )
 
         # Démarrer le scan
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
         scan_directory(root_path)
-        self.stdout.write(self.style.SUCCESS("Successfully scanned files"))
+
+        # Afficher les statistiques
+        self.stdout.write(self.style.SUCCESS("Scan completed successfully"))
+        self.stdout.write(
+            f"Directories: {stats['directories_created']} created, {stats['directories_existing']} existing"
+        )
+        self.stdout.write(
+            f"Files: {stats['files_created']} created, {stats['files_existing']} existing, {stats['files_updated']} updated"
+        )
+        self.stdout.write(
+            f"Total: {stats['directories_created'] + stats['directories_existing']} directories, {stats['files_created'] + stats['files_existing']} files"
+        )

@@ -1,7 +1,7 @@
-from datetime import datetime
 import os
 
 from django.db import models
+from django.utils import timezone
 
 
 class Directory(models.Model):
@@ -11,7 +11,7 @@ class Directory(models.Model):
         "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
     )
     last_modified = models.DateTimeField()
-    last_indexed = models.DateTimeField(default=datetime.now)
+    last_indexed = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.path
@@ -36,7 +36,7 @@ class File(models.Model):
     mime_type = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(null=True, blank=True)
     modified_at = models.DateTimeField(null=True, blank=True)
-    last_indexed = models.DateTimeField(default=datetime.now)
+    last_indexed = models.DateTimeField(default=timezone.now)
 
     # Métadonnées supplémentaires potentielles
     checksum = models.CharField(
