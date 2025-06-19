@@ -77,7 +77,7 @@ else:
         "[::1]",
         "0.0.0.0",
         "[::]",
-        "10.33.144.230",
+        "10.33.144.178",
     ]
 
 
@@ -103,6 +103,7 @@ INSTALLED_APPS = [
     "django_browser_reload",
     "userauth",
     "core",
+    "product_library_improved",
     "django_filters",
     "django_htmx",
 ]
@@ -211,7 +212,15 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "static/"
 
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     # Enable WhiteNoise's GZip and Brotli compression of static assets:
     # https://whitenoise.readthedocs.io/en/latest/django.html#add-compression-and-caching-support
     "staticfiles": {

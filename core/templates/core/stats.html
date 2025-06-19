@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+{% include "core/directory_tree.html" with directories=directory_tree depth=5 %}
+
+{% endblock %}

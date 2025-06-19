@@ -16,6 +16,15 @@ class Directory(models.Model):
     def __str__(self):
         return self.path
 
+    def children_clean(self):
+        return self.children.exclude(name__in=["REF"])
+
+    def total_files_count(self):
+        count = self.files.exclude(name__in=[".DS_Store", "Thumbs.db"]).count()
+        for child in self.children.exclude(name="REF"):
+            count += child.total_files_count()
+        return count
+
     class Meta:
         verbose_name_plural = "Directories"
         indexes = [
@@ -23,6 +32,7 @@ class Directory(models.Model):
             models.Index(fields=["name"]),
             models.Index(fields=["parent"]),
         ]
+        ordering = ["path"]
 
 
 class File(models.Model):
@@ -54,3 +64,4 @@ class File(models.Model):
             models.Index(fields=["size"]),
             models.Index(fields=["modified_at"]),
         ]
+        ordering = ["path"]
